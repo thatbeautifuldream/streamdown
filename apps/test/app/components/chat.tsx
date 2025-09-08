@@ -17,6 +17,7 @@ import {
   ComboboxTrigger,
 } from "@/components/ui/kibo-ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
+import { useLocalState } from "@/hooks/use-local-state";
 
 type ChatProps = {
   models: {
@@ -25,6 +26,8 @@ type ChatProps = {
   }[];
 };
 
+const SELECTED_MODEL_KEY = "selected-model";
+
 export const Chat = ({ models }: ChatProps) => {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
@@ -32,7 +35,25 @@ export const Chat = ({ models }: ChatProps) => {
     }),
   });
   const [input, setInput] = useState("");
-  const [model, setModel] = useState(models[0].value);
+  const [model, setModel] = useLocalState(SELECTED_MODEL_KEY, () => {
+    // Try to get from localStorage first
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem(SELECTED_MODEL_KEY);
+        if (stored) {
+          const parsedModel = JSON.parse(stored);
+          // Check if stored model exists in current models list
+          if (models.find((m) => m.value === parsedModel)) {
+            return parsedModel;
+          }
+        }
+      } catch {
+        // Fall through to default
+      }
+    }
+    // Default to first model if no valid stored value
+    return models[0]?.value;
+  });
 
   return (
     <div className="mx-auto flex h-screen max-w-4xl flex-col divide-y border-x">
