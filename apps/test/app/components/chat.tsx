@@ -17,7 +17,6 @@ import remarkCjkFriendlyGfmStrikethrough from "remark-cjk-friendly-gfm-strikethr
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { Streamdown } from "streamdown";
-import "streamdown/styles.css";
 import { Button } from "@/components/ui/button";
 import {
   Combobox,
@@ -30,7 +29,9 @@ import {
   ComboboxTrigger,
 } from "@/components/ui/kibo-ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
+import { ModeToggle } from "../../components/mode-toggle";
 import { Column } from "./column";
+import "streamdown/styles.css";
 
 interface ChatProps {
   models: {
@@ -60,7 +61,8 @@ export const Chat = ({ models }: ChatProps) => {
   }, [model]);
 
   return (
-    <div className="mx-auto flex h-screen flex-col divide-y overflow-hidden border-x">
+    <div className="relative mx-auto flex h-screen flex-col divide-y overflow-hidden border-x">
+        <ModeToggle className="absolute top-2 right-2 z-50" />
       <div className="grid h-full flex-1 grid-cols-5 divide-x overflow-hidden">
         <Column title="Raw">
           {messages.map((message) => (
